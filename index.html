@@ -581,83 +581,58 @@
     
     <!-- Slide: How Smart Retry (moved to position 3) -->
     <div class="slide">
-    <h2 style="font-size: 2.6em; margin-bottom: 30px;">How Smart Retry Increases Success Probability</h2>
+    <h2 style="font-size: 2.6em; margin-bottom: 30px;">How Smart Retry Achieves Idempotency</h2>
     <div class="content" style="max-width: 95%; margin: 0 auto;">
         <div class="success-rate-visual" style="padding: 32px; margin: 20px 0;">
-            <h3 style="text-align: center; margin-bottom: 24px; font-size: 1.5em;">Based on Actual Implementation Analysis</h3>
+            <h3 style="text-align: center; margin-bottom: 24px; font-size: 1.5em;">Deterministic re-entry, work-skipping, and conflict handling</h3>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin: 26px 0;">
-                <div style="text-align: center;">
-                    <h4 style="color: #ff6666; font-size: 1.1em; margin-bottom: 10px;">❌ Initial Attempt</h4>
-                    <div class="progress-bar" style="height: 48px; margin: 14px 0;">
-                        <div class="progress-fill" style="width: 70%; background: linear-gradient(to right, #ff3232, #ffaa00); font-size: 1.2em;">
-                            Single Shot
-                        </div>
-                    </div>
-                    <p style="color: #999; font-size: 0.85em;">No recovery mechanism</p>
-                </div>
-                <div style="text-align: center;">
-                    <h4 style="color: #4ade80; font-size: 1.1em; margin-bottom: 10px;">✅ With Smart Retry</h4>
-                    <div class="progress-bar" style="height: 48px; margin: 14px 0;">
-                        <div class="progress-fill" style="width: 90%; background: linear-gradient(to right, #4ade80, #00d4ff); font-size: 1.2em;">
-                            Recovery Window
-                        </div>
-                    </div>
-                    <p style="color: #999; font-size: 0.85em;">Optimized recovery flow</p>
-                </div>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin: 12px 0 4px 0;">
+                <span style="background: rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.4); border-radius:9999px; padding:6px 12px; font-size:0.9em;">Deterministic re-entry</span>
+                <span style="background: rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.4); border-radius:9999px; padding:6px 12px; font-size:0.9em;">Work-skipping</span>
+                <span style="background: rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.4); border-radius:9999px; padding:6px 12px; font-size:0.9em;">Conflict-safe</span>
+                <span style="background: rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.4); border-radius:9999px; padding:6px 12px; font-size:0.9em;">Consistency-checked</span>
             </div>
             
-            <h3 style="text-align: center; margin: 24px 0 20px 0; font-size: 1.5em;">Specific Recovery Mechanisms from Code Analysis</h3>
+            <h3 style="text-align: center; margin: 24px 0 20px 0; font-size: 1.5em;">Mechanisms That Guarantee Safe Retries</h3>
             
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin: 20px 0;">
                 <div class="metric-card" style="padding: 22px;">
                     <div class="metric-value" style="font-size: 1.9em; margin-bottom: 12px;">🎯</div>
-                    <div class="metric-label" style="font-size: 0.9em; margin-bottom: 8px;">State Preservation</div>
+                    <div class="metric-label" style="font-size: 0.9em; margin-bottom: 8px;">Idempotent Add-Replica</div>
                     <div style="color: #999; font-size: 0.75em; line-height: 1.2;">
                         <code style="font-size: 0.7em;">AllowReplicaOnTarget = true</code><br/>
-                        Handles "replica exists" errors<br/>
-                        Safe re-execution
+                        Safe if replica already exists<br/>
+                        No duplicate side effects
                     </div>
                 </div>
                 <div class="metric-card" style="padding: 22px;">
                     <div class="metric-value" style="font-size: 1.9em; margin-bottom: 12px;">⚡</div>
-                    <div class="metric-label" style="font-size: 0.9em; margin-bottom: 8px;">Skip Completed Work</div>
+                    <div class="metric-label" style="font-size: 0.9em; margin-bottom: 8px;">Skip Completed Force Replication</div>
                     <div style="color: #999; font-size: 0.75em; line-height: 1.2;">
                         <code style="font-size: 0.7em;">ForceReplication.Skip = true</code><br/>
-                        When ForceReplicationCompleted<br/>
-                        Saves hours of reprocessing
+                        When status = ForceReplicationCompleted<br/>
+                        Avoids reprocessing
                     </div>
                 </div>
                 <div class="metric-card" style="padding: 22px;">
-                    <div class="metric-value" style="font-size: 1.9em; margin-bottom: 12px;">⏰</div>
-                    <div class="metric-label" style="font-size: 0.9em; margin-bottom: 8px;">Timeout Relief</div>
+                    <div class="metric-value" style="font-size: 1.9em; margin-bottom: 12px;">🔁</div>
+                    <div class="metric-label" style="font-size: 0.9em; margin-bottom: 8px;">Deterministic Re-entry Points</div>
                     <div style="color: #999; font-size: 0.75em; line-height: 1.2;">
-                        Network partitions: minutes-hours<br/>
-                        Resource contention: load cycles<br/>
-                        Service dependencies: recovery time
+                        Restart <code style="font-size: 0.7em;">runMigrationCore</code> safely<br/>
+                        Approval gates before side effects
                     </div>
                 </div>
                 <div class="metric-card" style="padding: 22px;">
                     <div class="metric-value" style="font-size: 1.9em; margin-bottom: 12px;">🔍</div>
-                    <div class="metric-label" style="font-size: 0.9em; margin-bottom: 8px;">Status Reporting</div>
+                    <div class="metric-label" style="font-size: 0.9em; margin-bottom: 8px;">Consistency Guardrails</div>
                     <div style="color: #999; font-size: 0.75em; line-height: 1.2;">
-                        Comprehensive migration status report<br/>
-                        Consistency checks across control plane,<br/>
-                        data plane, and replica records
+                        Compare CP / DP / Replica records<br/>
+                        Proceed only when state is safe
                     </div>
                 </div>
             </div>
         </div>
         
-        <div style="background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 28px; margin: 24px 0;">
-            <h3 style="text-align: center; color: #00d4ff; font-size: 1.3em; margin-bottom: 18px;">Why Retries Boost Success Rates</h3>
-            <p style="font-size: 0.9em; text-align: center; line-height: 1.4; margin: 0;">
-                <strong>Most migration failures aren't permanent problems</strong> - they're temporary issues like network blips or high system load.
-            </p>
-            <p style="font-size: 0.9em; text-align: center; line-height: 1.4; margin: 10px 0 0 0;">
-                <strong>Our retry logic is smart about handling conflicts</strong> from the previous execution, making it truly idempotent.
-            </p>
-        </div>
     </div>
     <div class="slide-number">3 / 7</div>
     </div>
